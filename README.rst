@@ -1,6 +1,5 @@
-========================================
-djangorestframework-composed-permissions
-========================================
+Composed permissions for django-rest-framework
+----------------------------------------------
 
 A simple way to define complex permissions for django-rest-framework.
 
