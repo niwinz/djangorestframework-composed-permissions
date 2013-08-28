@@ -10,15 +10,15 @@ Introduction
 django-rest-framework by default has large ways to define permissions but none of them
 permits define a complex, multi depth and with logical operators permissions rules.
 
-djangorestframework-composed-permissions is 100% compatible with a django-rest-framework
+djangorestframework-composed-permissions is full compatible with a django-rest-framework
 permissions api but implements a simple way to build permission objects using reusable
-permission components.
+components (called permission components).
 
-djangorestframework-composed-permissions has 3 types of classes:
+djangorestframework-composed-permissions has 3 type of classes:
 
 - Permission components: a basic unit of permission.
-- Permission set: a collection of components joined with logic operator (and & or)
-- Composed permissions: container of both: components and sets having same interface
+- Permission set: a collection of components joined with logic operator (and, or & not)
+- Composed permissions: container of both, components and sets having same interface
   as django-rest-framework default permission.
 
 
@@ -35,11 +35,12 @@ It is very simple, install it on your virtualenv with pip:
 Quickstart
 ----------
 
-The best way to understand how djangorestframework-composed-permissions, is saying some
-examples.
+The best way to understand how djangorestframework-composed-permissions works, is
+looking some examples.
 
-This package comes with some generic components defined for you, later we will see how
-to define a own component but for the first example we go to use a generic components.
+This package comes with some generic permission components defined for you, later
+we will see how to define a own component but for the first example we go to use
+one generic.
 
 We go to define one permission and viewset that uses it:
 
@@ -69,8 +70,10 @@ We go to define one permission and viewset that uses it:
         queryset = User.objects.all()
 
 
-Note: `And` & `Or` classes are permission sets, that groups some components with logical
-operator. Also exists `Not` but we don't use it on this example.
+.. note::
+
+    `And` & `Or` classes are permission sets, that groups some components with logical
+    operator. Also exists `Not` but we don't use it on this example.
 
 `global_permission_set` method must return a permission set or only one component, and it
 is evaluted on every request, however `object_permission_set` is only evaluted when
@@ -79,8 +82,8 @@ a create, update, delete operation is executed.
 With `UserPermission` defined on previous example, we allow any authenticated user
 for do any thing and allow anonymous requests only if request method is safe.
 
-Reference
----------
+Low level api reference
+-----------------------
 
 This is a low level api documentation for 3 main components of this package.
 
@@ -117,8 +120,9 @@ of how define own permission components.
 Permission Sets
 ~~~~~~~~~~~~~~~
 
-Permissions sets implement same interface as components, but groups some components
-with logical operator.
+Permissions sets implement same interface as components. Permission sets groups
+N number of components with logical operator, with exception of `Not` that has
+special behavior and it accepts only one component as parameter.
 
 `And`, `Or` & `Not` are the default permission sets defined on this package.
 
@@ -177,6 +181,7 @@ This is a toplevel class of 3 main components of this package.
 
     These methods must return a :py:class:`~restfw_composed_permissions.base.BasePermissionComponent` subclass
     or :py:class:`~restfw_composed_permissions.base.BasePermissionSet` subclass.
+
 
 Generics
 --------
