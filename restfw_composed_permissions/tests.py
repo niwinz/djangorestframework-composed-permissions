@@ -148,3 +148,52 @@ class CorePermissionFrameworkTests(unittest.TestCase):
         permission = create_permission(lambda: permissions_set)()
 
         self.assertFalse(permission.has_permission(None, None))
+
+
+from .generic import components
+
+class GenericComponentsTests(unittest.TestCase):
+    def make_mock(self):
+        class Mock(object):
+            pass
+
+        return Mock()
+
+    def make_request(self):
+
+        request = self.make_mock()
+        request.user = self.make_mock()
+        return request
+
+    def test_allow_all(self):
+        instance = components.AllowAll()
+        self.assertTrue(instance.has_permission(None, None, None))
+
+    def test_allow_only_anonymous(self):
+        request = self.make_request()
+        request.user.is_anonymous = lambda: True
+
+        instance = components.AllowOnlyAnonymous()
+        self.assertTrue(instance.has_permission(None, request, None))
+
+    def test_allow_authenticated(self):
+        request = self.make_request()
+        request.user.is_anonymous = lambda: False
+
+        instance = components.AllowOnlyAuthenticated()
+        self.assertTrue(instance.has_permission(None, request, None))
+
+    def test_allow_safe_method_only(self):
+        request = self.make_request()
+        request.method = "GET"
+
+        instance = components.AllowOnlySafeHttpMethod()
+        self.assertTrue(instance.has_permission(None, request, None))
+
+    def test_obj_attr_equality(self):
+        obj = self.make_mock()
+        obj.x = 1
+        obj.y = 1
+
+        instance = components.ObjectAttrEqualToObjectAttr("obj.x", "obj.y")
+        self.assertTrue(instance.has_object_permission(None, None, None, obj))
