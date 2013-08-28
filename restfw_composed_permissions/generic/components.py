@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from rest_framework import permissions
 from ..base import (BasePermissionComponent,
                     BaseComposedPermision,
                     And, Or)
