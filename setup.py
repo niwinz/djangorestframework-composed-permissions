@@ -12,7 +12,7 @@ INSTALL_REQUIRES = [
 setup(
     name = "djangorestframework-composed-permissions",
     version = "0.1",
-    description = "Composed permissions for django-rest-framework"
+    description = "Composed permissions for django-rest-framework",
     long_description = "",
     keywords = "django, rest, restframework, permissions",
     author = "Andrey Antukh",
