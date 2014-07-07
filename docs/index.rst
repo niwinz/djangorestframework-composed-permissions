@@ -47,7 +47,7 @@ We go to define one permission and viewset that uses it:
 .. code-block:: python
 
     from restfw_composed_permissions.base import (BaseComposedPermision, And, Or)
-    from restfw_composed_permissions.generics.components import (
+    from restfw_composed_permissions.generic.components import (
             AllowAll, AllowOnlyAuthenticated, AllowOnlySafeHttpMethod)
 
 
@@ -113,7 +113,7 @@ Permission Component
 
         :rtype: bool
 
-You can see `restfw_composed_permissions.generics.components` for more examples
+You can see `restfw_composed_permissions.generic.components` for more examples
 of how define own permission components.
 
 
