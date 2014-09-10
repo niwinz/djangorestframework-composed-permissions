@@ -172,3 +172,6 @@ class And(BasePermissionSet):
 
     def __or__(self, component):
         return Or(self, component)
+        
+#Alias to old typo for backwards compatability
+BaseComposedPermision = BaseComposedPermission
