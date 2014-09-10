@@ -7,7 +7,7 @@ import inspect
 from rest_framework import permissions
 
 
-class BaseComposedPermision(permissions.BasePermission):
+class BaseComposedPermission(permissions.BasePermission):
     """
     Base class for compose permission with permission
     components and logical operators.
