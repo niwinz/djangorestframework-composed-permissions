@@ -2,7 +2,7 @@
 
 import unittest
 
-from .base import BaseComposedPermision
+from .base import BaseComposedPermission
 from .base import BasePermissionComponent
 from .base import And, Or
 
@@ -21,7 +21,7 @@ def create_component(value, instance=False):
 
 
 def create_permission(callback1, callback2=None):
-    class Permission(BaseComposedPermision):
+    class Permission(BaseComposedPermission):
         if callback1:
             global_permission_set = lambda self: callback1()
 
