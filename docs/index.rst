@@ -46,12 +46,12 @@ We go to define one permission and viewset that uses it:
 
 .. code-block:: python
 
-    from restfw_composed_permissions.base import (BaseComposedPermision, And, Or)
+    from restfw_composed_permissions.base import (BaseComposedPermission, And, Or)
     from restfw_composed_permissions.generic.components import (
             AllowAll, AllowOnlyAuthenticated, AllowOnlySafeHttpMethod)
 
 
-    class UserPermission(BaseComposedPermision):
+    class UserPermission(BaseComposedPermission):
         def global_permission_set(self):
             return Or(AllowOnlyAuthenticated,
                       And(AllowAll, AllowOnlySafeHttpMethod))
@@ -131,11 +131,11 @@ The usage of `And` example:
 .. code-block:: python
 
     # Simple usage as class instance
-    class SomePermission1(BaseComposedPermision):
+    class SomePermission1(BaseComposedPermission):
         global_permission_set = (lambda s: And(Component1, Component2))
 
     # Using & operator of components
-    class SomePermission2(BaseComposedPermision):
+    class SomePermission2(BaseComposedPermission):
         global_permission_set = (lambda s: Component1() & Component2())
 
 
@@ -144,15 +144,15 @@ The usage of `Or` examples:
 .. code-block:: python
 
     # Simple usage as class instance
-    class SomePermission1(BaseComposedPermision):
+    class SomePermission1(BaseComposedPermission):
         global_permission_set = (lambda s: Or(Component1(some_param), Component2))
 
     # Using | operator of components
-    class SomePermission2(BaseComposedPermision):
+    class SomePermission2(BaseComposedPermission):
         global_permission_set = (lambda s: Component1() | Component2())
 
     # Returning a list of components
-    class SomePermission3(BaseComposedPermision):
+    class SomePermission3(BaseComposedPermission):
         global_permission_set = (lambda s: [Component1, Component2])
 
 
@@ -161,11 +161,11 @@ Finally, `Not` usage examples:
 .. code-block:: python
 
     # Simple usage as class instance
-    class SomePermission1(BaseComposedPermision):
+    class SomePermission1(BaseComposedPermission):
         global_permission_set = (lambda s: Not(Component1))
 
     # Using ~ operator of components
-    class SomePermission2(BaseComposedPermision):
+    class SomePermission2(BaseComposedPermission):
         global_permission_set = (lambda s: ~Component1())
 
 
@@ -174,7 +174,7 @@ Composed Permission
 
 This is a toplevel class of 3 main components of this package.
 
-.. py:class:: restfw_composed_permissions.base.BaseComposedPermision
+.. py:class:: restfw_composed_permissions.base.BaseComposedPermission
 
     Any subclass of this must define `global_permission_set` as mandatory
     method and optionally `object_permission_set` method.
@@ -207,7 +207,7 @@ Components
 
 .. py:class:: restfw_composed_permissions.generic.components.ObjectAttrEqualToObjectAttr
 
-    This is a object level permision component and if is used on
+    This is a object level permission component and if is used on
     global permission context it always returns True.
 
     This component checks the equality of two expressions that are
@@ -220,7 +220,7 @@ Components
 
     .. code-block:: python
 
-        class SomePermission(BaseComposedPermision):
+        class SomePermission(BaseComposedPermission):
             global_permission_set = (lambda self: AllowAll)
             object_permission_set = (lambda self:
                                         ObjectAttrEqualToObjectAttr("request.user", "obj.owner"))
