@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import unittest
+from django.test import TestCase
+from restfw_composed_permissions.base import (BaseComposedPermission,
+                                              BasePermissionComponent,
+                                              And, Or)
 
-from .base import BaseComposedPermission
-from .base import BasePermissionComponent
-from .base import And, Or
+from restfw_composed_permissions.generic import components
 
 
 def create_component(value, instance=False):
@@ -31,7 +32,7 @@ def create_permission(callback1, callback2=None):
     return Permission
 
 
-class CorePermissionFrameworkTests(unittest.TestCase):
+class CorePermissionFrameworkTests(TestCase):
 
     def test_permission_with_unique_component(self):
         Component = create_component(True)
@@ -150,9 +151,7 @@ class CorePermissionFrameworkTests(unittest.TestCase):
         self.assertFalse(permission.has_permission(None, None))
 
 
-from .generic import components
-
-class GenericComponentsTests(unittest.TestCase):
+class GenericComponentsTests(TestCase):
     def make_mock(self):
         class Mock(object):
             pass
