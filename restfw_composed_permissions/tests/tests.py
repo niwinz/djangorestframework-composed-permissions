@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from restfw_composed_permissions.base import (BaseComposedPermission,
                                               BasePermissionComponent,
+                                              RestPermissionComponent,
                                               And, Or)
 
 from restfw_composed_permissions.generic import components
@@ -14,6 +15,18 @@ def create_component(value, instance=False):
             return value
 
         def has_object_permission(self, permission, request, view, obj):
+            return value
+
+    if instance:
+        return SimpleComponent()
+    return SimpleComponent
+
+def create_rest_component(value, instance=False):
+    class SimpleComponent(RestPermissionComponent):
+        def has_permission(self, request, view):
+            return value
+
+        def has_object_permission(self, request, view, obj):
             return value
 
     if instance:
@@ -146,6 +159,24 @@ class CorePermissionFrameworkTests(TestCase):
 
         permissions_set = ((TrueComponent() & TrueComponent()) &
                                 (FalseComponent() | (FalseComponent() & TrueComponent())))
+        permission = create_permission(lambda: permissions_set)()
+
+        self.assertFalse(permission.has_permission(None, None))
+
+    def test_rest_permission_components(self):
+        TrueComponent = create_rest_component(True)
+        FalseComponent = create_rest_component(False)
+
+        permissions_set = ((TrueComponent() & FalseComponent()) | TrueComponent())
+        permission = create_permission(lambda: permissions_set)()
+
+        self.assertTrue(permission.has_permission(None, None))
+
+    def test_mixed_permission_components(self):
+        TrueComponent = create_component(True)
+        FalseComponent = create_rest_component(False)
+
+        permissions_set = (TrueComponent() & FalseComponent())
         permission = create_permission(lambda: permissions_set)()
 
         self.assertFalse(permission.has_permission(None, None))
