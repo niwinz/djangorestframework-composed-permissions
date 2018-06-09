@@ -132,6 +132,11 @@ class BasePermissionSet(object):
 
         return name
 
+    def get_component_result(self, component, method_name, *args, **kwargs):
+        final_method_name = self.update_method_name(method_name, component)
+        method = getattr(component, final_method_name)
+        return method(*args, **kwargs)
+
     def _check_permission(self, method_name, *args, **kwargs):
         raise NotImplementedError()
 
@@ -148,18 +153,12 @@ class BasePermissionSet(object):
 
 class Not(BasePermissionSet):
     def has_permission(self, *args, **kwargs):
-        component = self.components[0]
-        method_name = self.update_method_name('has_permission', component)
-
-        method = getattr(component, method_name)
-        return not method(*args, **kwargs)
+        result = self.get_component_result(self.components[0], 'has_permission', *args, **kwargs)
+        return not result
 
     def has_object_permission(self, *args, **kwargs):
-        component = self.components[0]
-        method_name = self.update_method_name('has_object_permission', component)
-
-        method = getattr(component, method_name)
-        return not method(*args, **kwargs)
+        result = self.get_component_result(self.components[0], 'has_object_permission', *args, **kwargs)
+        return not result
 
 
 class Or(BasePermissionSet):
@@ -167,9 +166,8 @@ class Or(BasePermissionSet):
         valid = False
 
         for component in self.components:
-            final_method_name = self.update_method_name(method_name, component)
-            method = getattr(component, final_method_name)
-            if method(*args, **kwargs):
+            result = self.get_component_result(component, method_name, *args, **kwargs)
+            if result:
                 valid = True
                 break
 
@@ -189,9 +187,8 @@ class And(BasePermissionSet):
         valid = True
 
         for component in self.components:
-            final_method_name = self.update_method_name(method_name, component)
-            method = getattr(component, final_method_name)
-            if not method(*args, **kwargs):
+            result = self.get_component_result(component, method_name, *args, **kwargs)
+            if not result:
                 valid = False
                 break
 
