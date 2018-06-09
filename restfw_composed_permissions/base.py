@@ -101,6 +101,16 @@ class BasePermissionComponent(object):
         return Not(self)
 
 
+class RestPermissionComponent(BasePermissionComponent):
+
+    def has_permission(self, request, view):
+        raise NotImplementedError()
+
+    def has_object_permission(self, request, view, obj):
+        # By default return same as that "has_permission" method
+        return self.has_permission(request, view)
+
+
 class BasePermissionSet(object):
     """
     Base class for permission set.
@@ -109,6 +119,14 @@ class BasePermissionSet(object):
 
     def __init__(self, *args):
         self.components = [c() if inspect.isclass(c) else c for c in args]
+
+    def update_args(self, component, args):
+        if isinstance(component, RestPermissionComponent):
+            arglist = list(args)
+            arglist.remove('permission')
+            args = tuple(arglist)
+
+        return args
 
     def _check_permission(self, method_name, *args, **kwargs):
         raise NotImplementedError()
@@ -125,11 +143,13 @@ class BasePermissionSet(object):
 
 
 class Not(BasePermissionSet):
-    def has_permission(self, permission, request, view):
-        return not self.components[0].has_permission(permission, request, view)
+    def has_permission(self, *args, **kwargs):
+        args = self.update_args(self.components[0], args)
+        return not self.components[0].has_permission(*args, **kwargs)
 
-    def has_object_permission(self, permission, request, view, obj):
-        return not self.components[0].has_object_permission(permission, request, view, obj)
+    def has_object_permission(self, *args, **kwargs):
+        args = self.update_args(self.components[0], args)
+        return not self.components[0].has_object_permission(*args, **kwargs)
 
 
 class Or(BasePermissionSet):
@@ -138,6 +158,7 @@ class Or(BasePermissionSet):
 
         for component in self.components:
             method = getattr(component, method_name)
+            args = self.update_args(component, args)
             if method(*args, **kwargs):
                 valid = True
                 break
@@ -159,6 +180,7 @@ class And(BasePermissionSet):
 
         for component in self.components:
             method = getattr(component, method_name)
+            args = self.update_args(component, args)
             if not method(*args, **kwargs):
                 valid = False
                 break
@@ -172,6 +194,6 @@ class And(BasePermissionSet):
 
     def __or__(self, component):
         return Or(self, component)
-        
+
 #Alias to old typo for backwards compatability
 BaseComposedPermision = BaseComposedPermission
