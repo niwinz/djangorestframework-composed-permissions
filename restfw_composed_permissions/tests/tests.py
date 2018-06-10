@@ -4,7 +4,7 @@ from django.test import TestCase, tag
 from restfw_composed_permissions.base import (BaseComposedPermission,
                                               BasePermissionComponent,
                                               RestPermissionComponent,
-                                              And, Or)
+                                              And, Or, Not)
 
 from restfw_composed_permissions.generic import components
 
@@ -167,10 +167,10 @@ class CorePermissionFrameworkTests(TestCase):
         TrueComponent = create_rest_component(True)
         FalseComponent = create_rest_component(False)
 
-        permissions_set = ((TrueComponent() & FalseComponent()) | TrueComponent())
+        permissions_set = Not((TrueComponent() & FalseComponent()) | TrueComponent())
         permission = create_permission(lambda: permissions_set)()
 
-        self.assertTrue(permission.has_permission(None, None))
+        self.assertFalse(permission.has_permission(None, None))
 
     def test_mixed_permission_components(self):
         TrueComponent = create_component(True)
@@ -180,6 +180,15 @@ class CorePermissionFrameworkTests(TestCase):
         permission = create_permission(lambda: permissions_set)()
 
         self.assertFalse(permission.has_permission(None, None))
+
+    def test_not_permissions(self):
+        TrueComponent = create_component(True)
+        FalseComponent = create_component(False)
+
+        permissions_set = Not(TrueComponent() & FalseComponent())
+        permission = create_permission(lambda: permissions_set)()
+
+        self.assertTrue(permission.has_permission(None, None))
 
 
 class GenericComponentsTests(TestCase):
