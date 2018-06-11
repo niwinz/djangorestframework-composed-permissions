@@ -6,6 +6,7 @@ import sys
 
 
 INSTALL_REQUIRES = [
+    "django >=1.4",
     "djangorestframework",
 ]
 
