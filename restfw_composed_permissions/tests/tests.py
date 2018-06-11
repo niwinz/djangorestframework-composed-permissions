@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import unittest
+from django.test import TestCase, tag
+from restfw_composed_permissions.base import (BaseComposedPermission,
+                                              BasePermissionComponent,
+                                              RestPermissionComponent,
+                                              And, Or, Not)
 
-from .base import BaseComposedPermission
-from .base import BasePermissionComponent
-from .base import And, Or
+from restfw_composed_permissions.generic import components
 
 
 def create_component(value, instance=False):
@@ -13,6 +15,18 @@ def create_component(value, instance=False):
             return value
 
         def has_object_permission(self, permission, request, view, obj):
+            return value
+
+    if instance:
+        return SimpleComponent()
+    return SimpleComponent
+
+def create_rest_component(value, instance=False):
+    class SimpleComponent(RestPermissionComponent):
+        def has_permission(self, request, view):
+            return value
+
+        def has_object_permission(self, request, view, obj):
             return value
 
     if instance:
@@ -31,7 +45,7 @@ def create_permission(callback1, callback2=None):
     return Permission
 
 
-class CorePermissionFrameworkTests(unittest.TestCase):
+class CorePermissionFrameworkTests(TestCase):
 
     def test_permission_with_unique_component(self):
         Component = create_component(True)
@@ -149,10 +163,35 @@ class CorePermissionFrameworkTests(unittest.TestCase):
 
         self.assertFalse(permission.has_permission(None, None))
 
+    def test_rest_permission_components(self):
+        TrueComponent = create_rest_component(True)
+        FalseComponent = create_rest_component(False)
 
-from .generic import components
+        permissions_set = Not((TrueComponent() & FalseComponent()) | TrueComponent())
+        permission = create_permission(lambda: permissions_set)()
 
-class GenericComponentsTests(unittest.TestCase):
+        self.assertFalse(permission.has_permission(None, None))
+
+    def test_mixed_permission_components(self):
+        TrueComponent = create_component(True)
+        FalseComponent = create_rest_component(False)
+
+        permissions_set = (TrueComponent() & FalseComponent())
+        permission = create_permission(lambda: permissions_set)()
+
+        self.assertFalse(permission.has_permission(None, None))
+
+    def test_not_permissions(self):
+        TrueComponent = create_component(True)
+        FalseComponent = create_component(False)
+
+        permissions_set = Not(TrueComponent() & FalseComponent())
+        permission = create_permission(lambda: permissions_set)()
+
+        self.assertTrue(permission.has_permission(None, None))
+
+
+class GenericComponentsTests(TestCase):
     def make_mock(self):
         class Mock(object):
             pass
