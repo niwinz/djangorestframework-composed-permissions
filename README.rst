@@ -5,13 +5,14 @@ A simple way to define complex permissions for django-rest-framework.
 
 - **Documentation:** https://djangorestframework-composed-permissions.readthedocs.org/en/latest/
 
+Development
+-----------
+
+Run tests with our settings using the following command:
+
+``django-admin test restfw_composed_permissions --settings=restfw_composed_permissions.tests.settings_sqlite``
+
 License
 -------
 
 New BSD License
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/niwibe/djangorestframework-composed-permissions/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
