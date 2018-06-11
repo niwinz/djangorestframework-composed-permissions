@@ -1,0 +1,6 @@
+graft docs
+graft tests
+include LICENSE
+include CHANGES.rst
+include README.rst
+include runtests.py
