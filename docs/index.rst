@@ -17,8 +17,8 @@ components (called permission components).
 djangorestframework-composed-permissions has 3 type of classes:
 
 - Permission components: a basic unit of permission.
-- Permission set: a collection of components joined with logic operator (and, or & not)
-- Composed permissions: container of both, components and sets having same interface
+- Permission set: a collection of components joined with logic operator (and, or, not)
+- Composed permissions: container of both, components and sets. Having the same interface
   as django-rest-framework default permission.
 
 
@@ -39,7 +39,7 @@ The best way to understand how djangorestframework-composed-permissions works, i
 looking some examples.
 
 This package comes with some generic permission components defined for you, later
-we will see how to define a own component but for the first example we go to use
+we will see how to define your own component but for the first example we go to use
 one generic.
 
 We go to define one permission and viewset that uses it:
@@ -82,6 +82,8 @@ a create, update, delete operation is executed.
 With `UserPermission` defined on previous example, we allow any authenticated user
 for do any thing and allow anonymous requests only if request method is safe.
 
+See Permission Component below for classes to use when creating your own custom permission
+
 Low level api reference
 -----------------------
 
@@ -113,8 +115,39 @@ Permission Component
 
         :rtype: bool
 
-You can see `restfw_composed_permissions.generic.components` for more examples
-of how define own permission components.
+Here the extra permission argument contains the composed permission object.
+If you do not need this argument or are converting an existing permission class
+to a permission component you can subclass RestPermissionComponent instead
+  
+  .. py:class:: restfw_composed_permissions.base.RestPermissionComponent
+  
+      .. py:method:: has_permission(self, request, view)
+
+          Same as above
+          
+          :rtype: bool
+
+      .. py:method:: has_object_permission(self, request, view, obj)
+          
+          Same as above
+          
+          :rtype: bool
+
+Converting existing rest framework permissions is then done like this
+
+.. code-block:: python
+
+    from rest_framework.permissions import IsAdminUser
+    from restfw_composed_permissions.base import RestPermissionComponent
+  
+    class IsAdminUserComponent(IsAdminUser, RestPermissionComponent):
+        pass
+
+Components subclassed from either RestPermissionComponent or BasePermissionComponent
+(Or a combination of both) can be used when creating a permission set
+  
+You can look though `restfw_composed_permissions.generic.components` for more examples
+of how define your own permission components.
 
 
 Permission Sets
