@@ -6,3 +6,4 @@ versiontools*
 build*
 *.egg*
 docs/_build
+.venv
