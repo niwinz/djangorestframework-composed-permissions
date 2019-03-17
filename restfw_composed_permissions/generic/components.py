@@ -22,12 +22,12 @@ class AllowOnlyAnonymous(BasePermissionComponent):
     """
 
     def has_permission(self, permission, request, view):
-        return request.user.is_anonymous()
+        return request.user.is_anonymous
 
 
 class AllowOnlyAuthenticated(BasePermissionComponent):
     def has_permission(self, permission, request, view):
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             return False
         return True
 

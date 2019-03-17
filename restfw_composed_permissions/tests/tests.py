@@ -210,14 +210,14 @@ class GenericComponentsTests(TestCase):
 
     def test_allow_only_anonymous(self):
         request = self.make_request()
-        request.user.is_anonymous = lambda: True
+        request.user.is_anonymous = True
 
         instance = components.AllowOnlyAnonymous()
         self.assertTrue(instance.has_permission(None, request, None))
 
     def test_allow_authenticated(self):
         request = self.make_request()
-        request.user.is_anonymous = lambda: False
+        request.user.is_anonymous = False
 
         instance = components.AllowOnlyAuthenticated()
         self.assertTrue(instance.has_permission(None, request, None))
